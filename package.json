@@ -1,0 +1,23 @@
+{
+  "name": "@ali/gif-magick",
+  "description": "ImageMagick's Magick++ bindings for NodeJS, Just Gif",
+  "keywords": [
+    "imagemagick",
+    "magick++"
+  ],
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "yuejiang.zyj@alibaba-inc.com",
+  "contributors": [],
+  "main": "./index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "engines": {
+    "node": ">=8"
+  }
+}
