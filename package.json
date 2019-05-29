@@ -1,11 +1,14 @@
 {
   "name": "@ali/gif-magick",
+  "version": "0.0.1",
   "description": "ImageMagick's Magick++ bindings for NodeJS, Just Gif",
   "keywords": [
     "imagemagick",
     "magick++"
   ],
-  "version": "0.0.1",
+  "publishConfig": {
+    "registry": "http://registry.npm.alibaba-inc.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
