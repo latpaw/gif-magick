@@ -53,6 +53,12 @@ napi_value Convert(napi_env env, napi_callback_info info)
   bool directionBool;
   napi_get_value_bool(env, direction, &directionBool);
 
+  napi_value isGif;
+  const char* gifKey = "isGif";
+  status = napi_get_named_property(env, argv[2], gifKey, &isGif);
+  bool isGifBool;
+  napi_get_value_bool(env, isGif, &isGifBool);
+
   // init imageList to store gif
   list<Image> imageList;
   cout << "start convert" << endl;
@@ -66,22 +72,30 @@ napi_value Convert(napi_env env, napi_callback_info info)
   //  cout << "blob length:" << srcBlob.length() << endl;
 
   try {
-    // read the gif from blob
-    readImages(&imageList, srcBlob);
-
     Image appended;
 
-    // progressing
-    coalesceImages(&imageList, imageList.begin(), imageList.end());
-    appendImages(&appended, imageList.begin(), imageList.end(), !directionBool);
+    // read the gif from blob
+    if (isGifBool) {
+
+      readImages(&imageList, srcBlob);
+
+      // progressing
+      coalesceImages(&imageList, imageList.begin(), imageList.end());
+      appendImages(&appended, imageList.begin(), imageList.end(), !directionBool);
+
+    } else {
+
+      appended.read(srcBlob);
+
+    }
 
     //    appended.gaussianBlur(10,15);
     if(minifyBool){
       cout << "minify" << endl;
       appended.minify();
     }
-    //    cout << "width" << appended.size().width() << endl;
-    //    cout << "height" << appended.size().height() << endl;
+    cout << "width" << appended.size().width() << minifyBool << endl;
+    cout << "height" << appended.size().height() << endl;
 
     // write into the blob
     appended.write(&blob);
