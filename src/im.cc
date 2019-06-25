@@ -106,6 +106,8 @@ napi_value Convert(napi_env env, napi_callback_info info)
     cout << "exception" << err.what() << endl;
   }
 
+  napi_value result;
+
   napi_value resultBuffer;
 
   const void* data = blob.data();
@@ -113,8 +115,6 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
   // read the result from blob.data and return to js
   status = napi_create_buffer_copy(env, blob.length(), data, result_data, &resultBuffer);
-
-  napi_value result;
 
   status = napi_create_object(env, &result);
   napi_set_named_property(env, result, "data", resultBuffer);
