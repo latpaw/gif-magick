@@ -71,8 +71,9 @@ napi_value Convert(napi_env env, napi_callback_info info)
   Magick::Blob srcBlob(*buffer, (size_t)length);
   //  cout << "blob length:" << srcBlob.length() << endl;
 
+  Image appended;
+
   try {
-    Image appended;
 
     // read the gif from blob
     if (isGifBool) {
@@ -94,8 +95,8 @@ napi_value Convert(napi_env env, napi_callback_info info)
       cout << "minify" << endl;
       appended.minify();
     }
-    cout << "width" << appended.size().width() << minifyBool << endl;
-    cout << "height" << appended.size().height() << endl;
+    // cout << "width" << appended.size().width() << minifyBool << endl;
+    // cout << "height" << appended.size().height() << endl;
 
     // write into the blob
     appended.write(&blob);
@@ -105,13 +106,26 @@ napi_value Convert(napi_env env, napi_callback_info info)
     cout << "exception" << err.what() << endl;
   }
 
-  napi_value result;
+  napi_value resultBuffer;
 
   const void* data = blob.data();
   void** result_data;
 
   // read the result from blob.data and return to js
-  status = napi_create_buffer_copy(env, blob.length(), data, result_data, &result);
+  status = napi_create_buffer_copy(env, blob.length(), data, result_data, &resultBuffer);
+
+  napi_value result;
+
+  status = napi_create_object(env, &result);
+  napi_set_named_property(env, result, "data", resultBuffer);
+
+  napi_value width;
+  status = napi_create_int32(env, appended.size().width(), &width);
+  napi_set_named_property(env, result, "width", width);
+
+  napi_value height;
+  status = napi_create_int32(env, appended.size().height(), &height);
+  napi_set_named_property(env, result, "height", height);
 
   return result;
 }
