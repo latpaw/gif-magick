@@ -90,6 +90,8 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
     }
 
+    appended.quality(100);
+    appended.compressType(BZipCompression);
     //    appended.gaussianBlur(10,15);
     if(minifyBool){
       cout << "minify" << endl;

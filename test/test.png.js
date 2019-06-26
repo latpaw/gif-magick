@@ -7,5 +7,5 @@ module.exports = function() {
 
   console.log('width: ', result.width, ', height: ', result.height);
 
-  fs.writeFileSync('test/pngtest.png', result);
+  fs.writeFileSync('test/pngtest.png', result.data);
 };
