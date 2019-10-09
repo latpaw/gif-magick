@@ -11,7 +11,6 @@ using namespace node;
 using namespace std;
 using namespace Magick;
 
-
 napi_value Convert(napi_env env, napi_callback_info info)
 {
   napi_status status;
@@ -29,7 +28,7 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
   // get buffer
   size_t length;
-  void** buffer = (void**)malloc(buffer_length);
+  void **buffer = (void **)malloc(buffer_length);
   status = napi_get_buffer_info(env, argv[0], buffer, &length);
 
   //  cout << "length:" << length << endl;
@@ -42,19 +41,19 @@ napi_value Convert(napi_env env, napi_callback_info info)
   //  status = napi_get_value_bool(env, argv[2], &direction);
 
   napi_value minify;
-  const char* key = "minify";
+  const char *key = "minify";
   status = napi_get_named_property(env, argv[2], key, &minify);
   bool minifyBool;
   napi_get_value_bool(env, minify, &minifyBool);
 
   napi_value direction;
-  const char* dkey = "direction";
+  const char *dkey = "direction";
   status = napi_get_named_property(env, argv[2], dkey, &direction);
   bool directionBool;
   napi_get_value_bool(env, direction, &directionBool);
 
   napi_value isGif;
-  const char* gifKey = "isGif";
+  const char *gifKey = "isGif";
   status = napi_get_named_property(env, argv[2], gifKey, &isGif);
   bool isGifBool;
   napi_get_value_bool(env, isGif, &isGifBool);
@@ -73,27 +72,30 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
   Image appended;
 
-  try {
+  try
+  {
 
     // read the gif from blob
-    if (isGifBool) {
+    if (isGifBool)
+    {
 
       readImages(&imageList, srcBlob);
 
       // progressing
       coalesceImages(&imageList, imageList.begin(), imageList.end());
       appendImages(&appended, imageList.begin(), imageList.end(), !directionBool);
-
-    } else {
-
+    }
+    else
+    {
       appended.read(srcBlob);
-
+      appended.magick("PNG");
     }
 
     appended.quality(100);
     appended.compressType(BZipCompression);
     //    appended.gaussianBlur(10,15);
-    if(minifyBool){
+    if (minifyBool)
+    {
       cout << "minify" << endl;
       appended.minify();
     }
@@ -104,7 +106,9 @@ napi_value Convert(napi_env env, napi_callback_info info)
     appended.write(&blob);
 
     //    cout << "done" << endl;
-  }catch(Magick::Exception &err) {
+  }
+  catch (Magick::Exception &err)
+  {
     cout << "exception" << err.what() << endl;
   }
 
@@ -112,8 +116,8 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
   napi_value resultBuffer;
 
-  const void* data = blob.data();
-  void** result_data;
+  const void *data = blob.data();
+  void **result_data;
 
   // read the result from blob.data and return to js
   status = napi_create_buffer_copy(env, blob.length(), data, result_data, &resultBuffer);

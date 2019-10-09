@@ -1,0 +1,5 @@
+build
+cmake-build-debug
+.vscode
+node_modules
+.DS_Store
