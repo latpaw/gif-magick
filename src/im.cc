@@ -136,12 +136,89 @@ napi_value Convert(napi_env env, napi_callback_info info)
   return result;
 }
 
+napi_value Thumb(napi_env env, napi_callback_info info)
+{
+  napi_status status;
+
+  // 3 args, all napi_value
+  size_t argc = 3;
+  napi_value argv[3];
+
+  // read the argv
+  status = napi_get_cb_info(env, info, &argc, argv, 0, 0);
+
+  // get buffer length
+  double buffer_length;
+  status = napi_get_value_double(env, argv[1], &buffer_length);
+
+  // get buffer
+  size_t length;
+  void **buffer = (void **)malloc(buffer_length);
+  status = napi_get_buffer_info(env, argv[0], buffer, &length);
+
+  napi_value aspect;
+  const char *akey = "aspect";
+  status = napi_get_named_property(env, argv[2], akey, &aspect);
+  bool aspectBool;
+  napi_get_value_bool(env, aspect, &aspectBool);
+
+  napi_value width;
+  const char *wkey = "width";
+  status = napi_get_named_property(env, argv[2], wkey, &width);
+  double widthValue = 0;
+  napi_get_value_double(env, width, &widthValue);
+
+  napi_value height;
+  const char *hkey = "height";
+  status = napi_get_named_property(env, argv[2], hkey, &height);
+  double heightValue = 0;
+  napi_get_value_double(env, height, &heightValue);
+
+  Magick::Blob srcBlob(*buffer, (size_t)length);
+  Image image;
+  image.read(srcBlob);
+  Geometry geo;
+  size_t imageNewWidth = widthValue;
+  geo.width(imageNewWidth);
+  if (heightValue > 1)
+  {
+    size_t imageNewHeight = heightValue;
+    geo.height(heightValue);
+  }
+  if (aspectBool)
+  {
+    geo.aspect(aspectBool);
+  }
+  image.resize(geo);
+
+  Magick::Blob blob;
+  image.write(&blob);
+
+  napi_value result;
+  napi_value resultBuffer;
+
+  const void *data = blob.data();
+  void **result_data;
+
+  // read the result from blob.data and return to js
+  status = napi_create_buffer_copy(env, blob.length(), data, result_data, &resultBuffer);
+
+  status = napi_create_object(env, &result);
+  napi_set_named_property(env, result, "data", resultBuffer);
+
+  return result;
+}
+
 napi_value Init(napi_env env, napi_value exports)
 {
   //  napi_status status;
   napi_value convert;
   napi_create_function(env, NULL, 0, Convert, NULL, &convert);
   napi_set_named_property(env, exports, "convert", convert);
+
+  napi_value thumb;
+  napi_create_function(env, NULL, 0, Thumb, NULL, &thumb);
+  napi_set_named_property(env, exports, "thumb", thumb);
   return exports;
 }
 
