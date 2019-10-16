@@ -31,15 +31,6 @@ napi_value Convert(napi_env env, napi_callback_info info)
   void **buffer = (void **)malloc(buffer_length);
   status = napi_get_buffer_info(env, argv[0], buffer, &length);
 
-  //  cout << "length:" << length << endl;
-  //  char* src = (char *)malloc(100);
-  //  size_t srcResult;
-  //  status = napi_get_value_string_utf8(env, argv[0], src, 100, &srcResult);
-
-  // get the direction of merge image
-  //  bool direction;
-  //  status = napi_get_value_bool(env, argv[2], &direction);
-
   napi_value minify;
   const char *key = "minify";
   status = napi_get_named_property(env, argv[2], key, &minify);
@@ -57,6 +48,12 @@ napi_value Convert(napi_env env, napi_callback_info info)
   status = napi_get_named_property(env, argv[2], gifKey, &isGif);
   bool isGifBool;
   napi_get_value_bool(env, isGif, &isGifBool);
+
+  napi_value convertType;
+  const char *convertKey = "convertType";
+  status = napi_get_named_property(env, argv[2], convertKey, &convertType);
+  bool convertTypeBool;
+  napi_get_value_bool(env, convertType, &convertTypeBool);
 
   // init imageList to store gif
   list<Image> imageList;
@@ -88,7 +85,10 @@ napi_value Convert(napi_env env, napi_callback_info info)
     else
     {
       appended.read(srcBlob);
-      appended.magick("PNG");
+      if (convertTypeBool)
+      {
+        appended.magick("PNG");
+      }
     }
 
     appended.quality(100);
