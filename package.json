@@ -1,6 +1,6 @@
 {
   "name": "@ali/gif-magick",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ImageMagick's Magick++ bindings for NodeJS, Just Gif",
   "keywords": [
     "imagemagick",
