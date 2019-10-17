@@ -80,7 +80,7 @@ napi_value Convert(napi_env env, napi_callback_info info)
 
       // progressing
       coalesceImages(&imageList, imageList.begin(), imageList.end());
-      
+
       appendImages(&appended, imageList.begin(), imageList.end(), !directionBool);
       appended.magick("PNG");
     }
@@ -191,7 +191,7 @@ napi_value Thumb(napi_env env, napi_callback_info info)
   {
     geo.aspect(aspectBool);
   }
-  image.resize(geo);
+  image.sample(geo);
 
   Magick::Blob blob;
   image.write(&blob);
